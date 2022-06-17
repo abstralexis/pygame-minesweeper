@@ -230,6 +230,13 @@ def main() -> None:
         time_txt = COMICSANSMS.render(f"Time: {seconds_passed}", False, BLACK)
         WIN.blit(time_txt, (0, GRID_HEIGHT_PX))
 
+        num_flags = COMICSANSMS.render(
+            f"Flagged: {len(flagged)}", False, BLACK
+            )
+        WIN.blit(num_flags, (0, GRID_HEIGHT_PX+25))
+        mines_txt = COMICSANSMS.render(f"Mines: {NUM_MINES}", False, BLACK)
+        WIN.blit(mines_txt, (0, GRID_HEIGHT_PX+50))
+
 
         if sorted(flagged) == sorted(MINES):
             COMICSANSMSWIN = pygame.font.SysFont("comicsansms", 36)
