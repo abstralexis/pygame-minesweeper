@@ -119,11 +119,24 @@ def count_mines(rect: pygame.Rect) -> int:
     return count
 
 
+def get_mouse_rect(coords: tuple) -> pygame.Rect:
+    mouse_x = coords[0]
+    mouse_y = coords[1]
+    floor_x = floor(mouse_x / BLOCKSIZE) * BLOCKSIZE
+    floor_y = floor(mouse_y / BLOCKSIZE) * BLOCKSIZE
+    mouse_grid_rect = pygame.Rect(
+        floor_x, floor_y, BLOCKSIZE, BLOCKSIZE
+        )
+
+    return mouse_grid_rect
+
+
 def main() -> None:
     """
     Main game method
     """
     pressed = []
+    flagged = []
 
     while True:  
         for event in pygame.event.get():
@@ -132,15 +145,11 @@ def main() -> None:
                 sys.exit()
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:           # Left click
-                    mouse_x, mouse_y = pygame.mouse.get_pos()
-                    floor_x = floor(mouse_x / BLOCKSIZE) * BLOCKSIZE
-                    floor_y = floor(mouse_y / BLOCKSIZE) * BLOCKSIZE
-                    mouse_grid_rect = pygame.Rect(
-                        floor_x, floor_y, BLOCKSIZE, BLOCKSIZE
-                        )
+                mouse_grid_rect = get_mouse_rect(pygame.mouse.get_pos())
 
-                    if mouse_grid_rect in MINES:        # Mine detection
+                # What to do on a left click
+                if event.button == 1:
+                    if mouse_grid_rect in MINES:
                         mine_rect = mouse_grid_rect     # Abstraction
                         pygame.draw.rect(WIN, WHITE, mine_rect)
                         pygame.display.flip()
@@ -152,38 +161,49 @@ def main() -> None:
                         pressed.append(click_rect)
 
                         # Press adjacent tiles
-                        adjacent = get_adjacent(click_rect)
-                        for square in adjacent:
-                            pressed.append(square)
+                        if len(pressed) > 0:
+                            adjacent = get_adjacent(click_rect)
+                            for square in adjacent:
+                                pressed.append(square)
+                
+                # What do do on a right click
+                elif event.button == 3:
+                    flagged.append(mouse_grid_rect)
                         
         draw_grid()
 
         revealed = []
-        for pressed_rect in pressed:
-            pygame.draw.rect(WIN, BLACK, pressed_rect)
-            
-            adj = get_adjacent(pressed_rect)
-            for tile in adj:
-                if tile not in MINES:
-                    mines = count_mines(tile)
-                    if mines != 0:
-                        col = WHITE # Default value to appease python
-                        if mines <= 2:
-                            col = LIGHT_BLUE
-                        elif mines <= 4:
-                            col = BLUE
-                        elif mines <= 6:
-                            col = YELLOW
-                        else:
-                            col = ORANGE
+        if len(pressed) > 0:
+            for pressed_rect in pressed:
+                pygame.draw.rect(WIN, BLACK, pressed_rect)
+                
+                adj = get_adjacent(pressed_rect)
+                for tile in adj:
+                    if tile not in MINES:
+                        mines = count_mines(tile)
+                        if mines != 0:
+                            col = WHITE         # Default value to appease python
+                            if mines <= 2:
+                                col = LIGHT_BLUE
+                            elif mines <= 4:
+                                col = BLUE
+                            elif mines <= 6:
+                                col = YELLOW
+                            else:
+                                col = ORANGE
 
-                        text = COMICSANSMS.render(f"{mines}", False, col)
-                        revealed.append((text, tile))
+                            text = COMICSANSMS.render(f"{mines}", False, col)
+                            revealed.append((text, tile))
 
-        for square in revealed:
-            txt = square[0]
-            rect = square[1]
-            WIN.blit(txt, rect)
+        if len(revealed) > 0:
+            for square in revealed:
+                txt = square[0]
+                rect = square[1]
+                WIN.blit(txt, rect)
+
+        if len(flagged) > 0:
+            for flag in flagged:
+                pygame.draw.rect(WIN, RED, flag)
 
         white_rect = pygame.Rect(
             0, GRID_HEIGHT_PX, 
