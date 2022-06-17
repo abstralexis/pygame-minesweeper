@@ -63,11 +63,20 @@ def get_mines(number_of_mines) -> list:
     grid_height = GRID_HEIGHT_PX // BLOCKSIZE
 
     mine_rects = []
+    
     for i in range(number_of_mines):
-        rand_x = randint(0, grid_width-1) * 20
-        rand_y = randint(0, grid_height-1) * 20
-        minerect = pygame.Rect(rand_x, rand_y, BLOCKSIZE, BLOCKSIZE)
+        generated = False      
+        while not generated:
+            rand_x = randint(0, grid_width-1) * 20
+            rand_y = randint(0, grid_height-1) * 20
+            minerect = pygame.Rect(rand_x, rand_y, BLOCKSIZE, BLOCKSIZE)
+            if minerect not in mine_rects:
+                generated = True
+        
         mine_rects.append(minerect)
+
+    mine_rects = mine_rects[:100]
+    print(len(mine_rects))
 
     return mine_rects
 
@@ -188,12 +197,14 @@ def main() -> None:
                 if event.button == 1:
                     if mouse_grid_rect in MINES:
                         mine_rect = mouse_grid_rect     # Abstraction
+                        print(len(MINES))
                         for mine in MINES:
+                            print(mine)
                             pygame.draw.rect(WIN, WHITE, mine)
                         pygame.display.flip()
-                        pygame.time.wait(1000)          # Wait 1s
-                        pygame.quit()
-                        sys.exit()
+                        # pygame.time.wait(1000)          # Wait 1s
+                        # pygame.quit()
+                        # sys.exit()
                     else:
                         click_rect = mouse_grid_rect    # Abstraction
                         if click_rect not in numbered:
@@ -234,7 +245,7 @@ def main() -> None:
             f"Flagged: {len(flagged)}", False, BLACK
             )
         WIN.blit(num_flags, (0, GRID_HEIGHT_PX+25))
-        mines_txt = COMICSANSMS.render(f"Mines: {NUM_MINES}", False, BLACK)
+        mines_txt = COMICSANSMS.render(f"Mines: {len(MINES)}", False, BLACK)
         WIN.blit(mines_txt, (0, GRID_HEIGHT_PX+50))
 
 
