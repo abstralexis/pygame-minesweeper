@@ -27,7 +27,7 @@ HEIGHT = 650
 SCREEN_SIZE = (WIDTH, HEIGHT)
 
 pygame.font.init()
-COMICSANSMS = pygame.font.SysFont("comicsansms", 30)
+COMICSANSMS = pygame.font.SysFont("comicsansms", 20)
 
 
 pygame.init()
@@ -72,13 +72,53 @@ def get_mines(number_of_mines) -> list:
     return mine_coords
 
 
+NUM_MINES = 100
+MINES = get_mines(NUM_MINES)
+
+
+def get_adjacent(pressrect: pygame.Rect):
+    """
+    Returns number of adjacent mines and rects of safe spaces
+    """
+    x = pressrect.x
+    y = pressrect.y
+    
+    rects = []
+    num_mines = 0
+
+    # This is really messy.
+    # TODO @AlexisComix 
+    # for some reason, None of the rects adjacent are in mines somehow.
+    # No clue how this happens 
+    # up
+    rects.append(pygame.Rect(x, y-BLOCKSIZE, BLOCKSIZE, BLOCKSIZE))
+    print(pygame.Rect(x, y-BLOCKSIZE, BLOCKSIZE, BLOCKSIZE)) # TEST
+    # down
+    rects.append(pygame.Rect(x, y+BLOCKSIZE, BLOCKSIZE, BLOCKSIZE))
+    # left
+    rects.append(pygame.Rect(x-BLOCKSIZE, y, BLOCKSIZE, BLOCKSIZE))
+    # right
+    rects.append(pygame.Rect(x+BLOCKSIZE, y, BLOCKSIZE, BLOCKSIZE))
+    # upleft
+    rects.append(pygame.Rect(x-BLOCKSIZE, y-BLOCKSIZE, BLOCKSIZE, BLOCKSIZE))
+    # upright
+    rects.append(pygame.Rect(x+BLOCKSIZE, y-BLOCKSIZE, BLOCKSIZE, BLOCKSIZE))
+    # downright
+    rects.append(pygame.Rect(x+BLOCKSIZE, y+BLOCKSIZE, BLOCKSIZE, BLOCKSIZE))
+    # downleft
+    rects.append(pygame.Rect(x-BLOCKSIZE, y+BLOCKSIZE, BLOCKSIZE, BLOCKSIZE))
+
+    for rect in rects:
+        if rect in MINES: 
+            num_mines += 1
+
+    return num_mines, rects
+
+
 def main() -> None:
     """
     Main game method
     """
-    NUM_MINES = 100
-    MINES = get_mines(NUM_MINES)
-
     pressed = []
 
     while True:  
@@ -88,14 +128,20 @@ def main() -> None:
                 sys.exit()
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1: # Left click
+                if event.button == 1:           # Left click
                     mouse_x, mouse_y = pygame.mouse.get_pos()
                     floor_x = floor(mouse_x / BLOCKSIZE) * BLOCKSIZE
                     floor_y = floor(mouse_y / BLOCKSIZE) * BLOCKSIZE
                     mouse_grid_pos = (floor_x, floor_y)
 
-                    if mouse_grid_pos in MINES:
+                    if mouse_grid_pos in MINES: # Mine detection
                         print("BOOM!")          # Testing message
+                        mine_rect = pygame.Rect(
+                            mouse_grid_pos, (BLOCKSIZE, BLOCKSIZE)
+                            )
+                        print(mine_rect) # TEST
+                        pygame.draw.rect(WIN, WHITE, mine_rect)
+                        pygame.display.flip()
                         pygame.time.wait(1000)  # Wait 1s
                         pygame.quit()
                         sys.exit()
@@ -104,13 +150,43 @@ def main() -> None:
                             mouse_grid_pos, (BLOCKSIZE, BLOCKSIZE)
                             )
                         pressed.append(click_rect)
+
+                        _, adjacent = get_adjacent(click_rect)
+                        print(_)
+                        for square in adjacent:
+                            pressed.append(square)
+
+        revealed = []
                         
         draw_grid()
         for pressed_rect in pressed:
+            rect_x = pressed_rect.x
+            rect_y = pressed_rect.y
+
             pygame.draw.rect(WIN, BLACK, pressed_rect)
+            
+            mines, _ = get_adjacent(pressed_rect)
+            col = tuple()
+            if mines != 0:
+                match mines:
+                    case 1, 2:
+                        col = LIGHT_BLUE
+                    case 3, 4:
+                        col = BLUE
+                    case 5, 6:
+                        col = YELLOW
+                    case 7, 8:
+                        col = ORANGE
+                text = COMICSANSMS.render(f"{mines}", color=col)
+                revealed.append((text, click_rect))
+                
+        for square in revealed:
+            
+            txt = square[0]
+            rect = square[1]
+            WIN.blit(txt, rect)
         pygame.display.update()
         clock.tick(12)
-
 
 
 if __name__ == "__main__":
