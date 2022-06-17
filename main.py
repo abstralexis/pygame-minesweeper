@@ -140,43 +140,9 @@ def main() -> None:
     """
     pressed = []
     flagged = []
+    numbered = []
 
     while True:  
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_grid_rect = get_mouse_rect(pygame.mouse.get_pos())
-
-                # What to do on a left click
-                if event.button == 1:
-                    if mouse_grid_rect in MINES:
-                        mine_rect = mouse_grid_rect     # Abstraction
-                        pygame.draw.rect(WIN, WHITE, mine_rect)
-                        pygame.display.flip()
-                        pygame.time.wait(1000)          # Wait 1s
-                        pygame.quit()
-                        sys.exit()
-                    else:
-                        click_rect = mouse_grid_rect    # Abstraction
-                        pressed.append(click_rect)
-
-                        # Press adjacent tiles
-                        if len(pressed) > 0:
-                            adjacent = get_adjacent(click_rect)
-                            for square in adjacent:
-                                pressed.append(square)
-                
-                # What do do on a right click
-                elif event.button == 3:
-                    if mouse_grid_rect not in flagged:  # if not flagged, flag
-                        flagged.append(mouse_grid_rect)
-                    else:                               # if flagged, unflag
-                        flag_index = flagged.index(mouse_grid_rect)
-                        del flagged[flag_index]
-
         draw_grid()
 
         if len(pressed) > 0:                # Fill in pressed spaces
@@ -205,8 +171,46 @@ def main() -> None:
                             else:
                                 col = ORANGE
 
+                            pygame.draw.rect(WIN, DARK_GREY, tile)
                             text = COMICSANSMS.render(f" {mines}", False, col)
                             revealed.append((text, tile))
+                            numbered.append(tile)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_grid_rect = get_mouse_rect(pygame.mouse.get_pos())
+
+                # What to do on a left click
+                if event.button == 1:
+                    if mouse_grid_rect in MINES:
+                        mine_rect = mouse_grid_rect     # Abstraction
+                        pygame.draw.rect(WIN, WHITE, mine_rect)
+                        pygame.display.flip()
+                        pygame.time.wait(1000)          # Wait 1s
+                        pygame.quit()
+                        sys.exit()
+                    else:
+                        click_rect = mouse_grid_rect    # Abstraction
+                        if click_rect not in numbered:
+                            pressed.append(click_rect)
+
+                            # Press adjacent tiles
+                            if len(pressed) > 0:
+                                adjacent = get_adjacent(click_rect)
+                                for square in adjacent:
+                                    pressed.append(square)
+                
+                # What do do on a right click
+                elif event.button == 3:
+                    if mouse_grid_rect not in flagged:  # if not flagged, flag
+                        flagged.append(mouse_grid_rect)
+                    else:                               # if flagged, unflag
+                        flag_index = flagged.index(mouse_grid_rect)
+                        del flagged[flag_index]
 
         if len(revealed) > 0:
             for square in revealed:
