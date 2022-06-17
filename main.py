@@ -188,7 +188,8 @@ def main() -> None:
                 if event.button == 1:
                     if mouse_grid_rect in MINES:
                         mine_rect = mouse_grid_rect     # Abstraction
-                        pygame.draw.rect(WIN, WHITE, mine_rect)
+                        for mine in MINES:
+                            pygame.draw.rect(WIN, WHITE, mine)
                         pygame.display.flip()
                         pygame.time.wait(1000)          # Wait 1s
                         pygame.quit()
