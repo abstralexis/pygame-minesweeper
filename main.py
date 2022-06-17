@@ -86,13 +86,6 @@ def get_adjacent(pressrect: pygame.Rect):
     rects = []
 
     # This is really messy.
-    # TODO @AlexisComix 
-    # for some reason, None of the rects adjacent are in mines somehow.
-    # No clue how this happens 
-    # The actual pressing nearby tiles works, but not mine count
-    # up
-    # Fix? Separate mine counting and adjacent rect finding 
-
     rects.append(pygame.Rect(x, y-BLOCKSIZE, BLOCKSIZE, BLOCKSIZE))
     # down
     rects.append(pygame.Rect(x, y+BLOCKSIZE, BLOCKSIZE, BLOCKSIZE))
