@@ -225,6 +225,15 @@ def main() -> None:
             )
         pygame.draw.rect(WIN, WHITE, white_rect)
 
+        if sorted(flagged) == sorted(MINES):
+            COMICSANSMSWIN = pygame.font.SysFont("comicsansms", 36)
+            win_text = COMICSANSMSWIN.render("You win!", False, BLACK)
+            WIN.blit(win_text, (WIDTH//2-50, GRID_HEIGHT_PX+50))
+            pygame.display.update()
+            pygame.time.wait(2000)
+            pygame.quit()
+            sys.exit()
+
         pygame.display.update()
         clock.tick(12)
 
