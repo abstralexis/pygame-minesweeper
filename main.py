@@ -133,7 +133,6 @@ def get_mouse_rect(coords: tuple) -> pygame.Rect:
 
     return mouse_grid_rect
 
-
 def main() -> None:
     """
     Main game method
@@ -141,6 +140,7 @@ def main() -> None:
     pressed = []
     flagged = []
     numbered = []
+    ticks_passed = 0
 
     while True:  
         draw_grid()
@@ -224,6 +224,12 @@ def main() -> None:
             WIDTH, HEIGHT-GRID_HEIGHT_PX
             )
         pygame.draw.rect(WIN, WHITE, white_rect)
+
+        ticks_passed += clock.get_time()
+        seconds_passed = ticks_passed // 1000
+        time_txt = COMICSANSMS.render(f"Time: {seconds_passed}", False, BLACK)
+        WIN.blit(time_txt, (0, GRID_HEIGHT_PX))
+
 
         if sorted(flagged) == sorted(MINES):
             COMICSANSMSWIN = pygame.font.SysFont("comicsansms", 36)
