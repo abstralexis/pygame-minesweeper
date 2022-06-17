@@ -76,7 +76,6 @@ def get_mines(number_of_mines) -> list:
         mine_rects.append(minerect)
 
     mine_rects = mine_rects[:100]
-    print(len(mine_rects))
 
     return mine_rects
 
@@ -197,9 +196,7 @@ def main() -> None:
                 if event.button == 1:
                     if mouse_grid_rect in MINES:
                         mine_rect = mouse_grid_rect     # Abstraction
-                        print(len(MINES))
                         for mine in MINES:
-                            print(mine)
                             pygame.draw.rect(WIN, WHITE, mine)
                         pygame.display.flip()
                         pygame.time.wait(1000)          # Wait 1s
