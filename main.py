@@ -202,9 +202,9 @@ def main() -> None:
                             print(mine)
                             pygame.draw.rect(WIN, WHITE, mine)
                         pygame.display.flip()
-                        # pygame.time.wait(1000)          # Wait 1s
-                        # pygame.quit()
-                        # sys.exit()
+                        pygame.time.wait(1000)          # Wait 1s
+                        pygame.quit()
+                        sys.exit()
                     else:
                         click_rect = mouse_grid_rect    # Abstraction
                         if click_rect not in numbered:
