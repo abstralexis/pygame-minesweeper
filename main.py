@@ -179,11 +179,17 @@ def main() -> None:
 
         draw_grid()
 
+        if len(pressed) > 0:                # Fill in pressed spaces
+            for pressed_rect in pressed:
+                pygame.draw.rect(WIN, BLACK, pressed_rect)
+
+        if len(flagged) > 0:
+            for flag in flagged:
+                pygame.draw.rect(WIN, RED, flag)
+
         revealed = []
         if len(pressed) > 0:
             for pressed_rect in pressed:
-                pygame.draw.rect(WIN, BLACK, pressed_rect)
-                
                 adj = get_adjacent(pressed_rect)
                 for tile in adj:
                     if tile not in MINES:
@@ -207,10 +213,6 @@ def main() -> None:
                 txt = square[0]
                 rect = square[1]
                 WIN.blit(txt, rect)
-
-        if len(flagged) > 0:
-            for flag in flagged:
-                pygame.draw.rect(WIN, RED, flag)
 
         white_rect = pygame.Rect(
             0, GRID_HEIGHT_PX, 
