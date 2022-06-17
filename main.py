@@ -183,12 +183,12 @@ def main() -> None:
             for pressed_rect in pressed:
                 pygame.draw.rect(WIN, BLACK, pressed_rect)
 
-        if len(flagged) > 0:
+        if len(flagged) > 0:                # Fill in flagged spaces
             for flag in flagged:
                 pygame.draw.rect(WIN, RED, flag)
 
-        revealed = []
-        if len(pressed) > 0:
+        revealed = []                       # Do the numbers
+        if len(pressed) > 0:        
             for pressed_rect in pressed:
                 adj = get_adjacent(pressed_rect)
                 for tile in adj:
@@ -205,7 +205,7 @@ def main() -> None:
                             else:
                                 col = ORANGE
 
-                            text = COMICSANSMS.render(f"{mines}", False, col)
+                            text = COMICSANSMS.render(f" {mines}", False, col)
                             revealed.append((text, tile))
 
         if len(revealed) > 0:
