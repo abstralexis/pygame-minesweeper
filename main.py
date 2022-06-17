@@ -120,6 +120,9 @@ def count_mines(rect: pygame.Rect) -> int:
 
 
 def get_mouse_rect(coords: tuple) -> pygame.Rect:
+    """
+    Returns a rect for the grid where the mouse is
+    """
     mouse_x = coords[0]
     mouse_y = coords[1]
     floor_x = floor(mouse_x / BLOCKSIZE) * BLOCKSIZE
@@ -168,8 +171,12 @@ def main() -> None:
                 
                 # What do do on a right click
                 elif event.button == 3:
-                    flagged.append(mouse_grid_rect)
-                        
+                    if mouse_grid_rect not in flagged:  # if not flagged, flag
+                        flagged.append(mouse_grid_rect)
+                    else:                               # if flagged, unflag
+                        flag_index = flagged.index(mouse_grid_rect)
+                        del flagged[flag_index]
+
         draw_grid()
 
         revealed = []
@@ -182,7 +189,7 @@ def main() -> None:
                     if tile not in MINES:
                         mines = count_mines(tile)
                         if mines != 0:
-                            col = WHITE         # Default value to appease python
+                            col = WHITE     # Default value to appease python
                             if mines <= 2:
                                 col = LIGHT_BLUE
                             elif mines <= 4:
