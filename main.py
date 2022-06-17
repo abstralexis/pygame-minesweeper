@@ -9,7 +9,7 @@ DARK_GREY = (50, 50, 50)        # BG
 
 BLACK = (0, 0, 0)               # Pressed
 
-WHITE = (255, 255, 255)
+WHITE = (255, 255, 255)         # For blank area
 
 RED = (255, 0, 0)               # Flagged
 
@@ -179,12 +179,19 @@ def main() -> None:
                         col = ORANGE
                 text = COMICSANSMS.render(f"{mines}", color=col)
                 revealed.append((text, click_rect))
-                
+        
+        white_rect = pygame.Rect(
+            0, GRID_HEIGHT_PX, 
+            WIDTH, HEIGHT-GRID_HEIGHT_PX
+            )
+        pygame.draw.rect(WIN, WHITE, white_rect)
+
         for square in revealed:
             
             txt = square[0]
             rect = square[1]
             WIN.blit(txt, rect)
+
         pygame.display.update()
         clock.tick(12)
 
