@@ -64,8 +64,8 @@ def get_mines(number_of_mines) -> list:
 
     mine_rects = []
     for i in range(number_of_mines):
-        rand_x = randint(0, grid_width) * 20
-        rand_y = randint(0, grid_height) * 20
+        rand_x = randint(0, grid_width-1) * 20
+        rand_y = randint(0, grid_height-1) * 20
         minerect = pygame.Rect(rand_x, rand_y, BLOCKSIZE, BLOCKSIZE)
         mine_rects.append(minerect)
 
