@@ -175,10 +175,6 @@ def main() -> None:
             for pressed_rect in pressed:
                 pygame.draw.rect(WIN, BLACK, pressed_rect)
 
-        if len(flagged) > 0:                # Fill in flagged spaces
-            for flag in flagged:
-                pygame.draw.rect(WIN, RED, flag)
-
         revealed = []                       # Do the numbers
         if len(pressed) > 0:        
             for pressed_rect in pressed:
@@ -253,6 +249,10 @@ def main() -> None:
                     else:                               # if flagged, unflag
                         flag_index = flagged.index(mouse_grid_rect)
                         del flagged[flag_index]
+
+        if len(flagged) > 0:                # Fill in flagged spaces
+            for flag in flagged:
+                pygame.draw.rect(WIN, RED, flag)
 
         # Draw the numbers on numbered squares that have been revealed
         if len(revealed) > 0:
