@@ -244,11 +244,20 @@ def main() -> None:
                 
                 # What do do on a right click
                 elif event.button == 3:
-                    if mouse_grid_rect not in flagged:  # if not flagged, flag
-                        flagged.append(mouse_grid_rect)
-                    else:                               # if flagged, unflag
-                        flag_index = flagged.index(mouse_grid_rect)
-                        del flagged[flag_index]
+                    # Check if mouse is in bounds of the grid
+                    in_bounds = False
+                    if mouse_grid_rect.x < WIDTH:
+                        if mouse_grid_rect.y < GRID_HEIGHT_PX:
+                            in_bounds = True
+
+                    # If mouse is in bounds...
+                    if in_bounds:   
+                        if mouse_grid_rect not in flagged:  # if not flagged
+                            flagged.append(mouse_grid_rect) # flag tile
+
+                        else:                       # if  already flagged
+                            flag_index = flagged.index(mouse_grid_rect)
+                            del flagged[flag_index] # unflag
 
         if len(flagged) > 0:                # Fill in flagged spaces
             for flag in flagged:
