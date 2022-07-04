@@ -167,6 +167,14 @@ def main() -> None:
     numbered = []
     ticks_passed = 0
 
+    def draw_flags():
+        """
+        Draw the flags
+        """
+        if len(flagged) > 0:                # Fill in flagged spaces
+            for flag in flagged:
+                pygame.draw.rect(WIN, RED, flag)
+
     # Main game loop
     while True:  
         draw_grid()
@@ -218,9 +226,11 @@ def main() -> None:
 
                 # What to do on a left click
                 if event.button == 1:
-                    if mouse_grid_rect in MINES:        # If clicked is a mine    
-                        for mine in MINES:              # Draw all mines
+                    if mouse_grid_rect in MINES:        # If clicked is a mine   
+                        draw_flags()                    # Draw all flags 
+                        for mine in MINES:              # Draw all mines                
                             pygame.draw.rect(WIN, WHITE, mine)
+
                         pygame.display.flip()
 
                         # Wait 2s then quit game
@@ -259,9 +269,7 @@ def main() -> None:
                             flag_index = flagged.index(mouse_grid_rect)
                             del flagged[flag_index] # unflag
 
-        if len(flagged) > 0:                # Fill in flagged spaces
-            for flag in flagged:
-                pygame.draw.rect(WIN, RED, flag)
+        draw_flags()
 
         # Draw the numbers on numbered squares that have been revealed
         if len(revealed) > 0:
